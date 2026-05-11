@@ -16,7 +16,7 @@ CDC BRFSS dataset (~250K rows, 21 features) from Kaggle (Alex Teboul).
 
 ## Current Status
 Week 2, Day 4 — COMPLETED ✅
-Week 2, Day 5 — Starting next (EDA continued + Correlation Heatmap + Statistical Analysis)
+Week 2, Day 5 — Starting next (EDA continued + Correlation Heatmap)
 
 ## Completed So Far
 - [x] Project folder structure created
