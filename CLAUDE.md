@@ -15,8 +15,8 @@ CDC BRFSS dataset (~250K rows, 21 features) from Kaggle (Alex Teboul).
 - Help debug approach, not just code
 
 ## Current Status
-Week 2, Day 4 — COMPLETED ✅
-Week 2, Day 5 — Starting next (EDA continued + Correlation Heatmap)
+Week 2, Day 6 — COMPLETED ✅
+Week 2, Day 7 — Starting next (Probability Distributions + Bayes Theorem)
 
 ## Completed So Far
 - [x] Project folder structure created
@@ -38,6 +38,11 @@ Week 2, Day 5 — Starting next (EDA continued + Correlation Heatmap)
 - [x] Sentinel value handling during EDA (EXERANY2, PHYSHLTH)
 - [x] Zero-inflation identified in PHYSHLTH
 - [x] Plots saved to reports/
+- [x] T-test: BMI vs Diabetes (p < 0.001)
+- [x] Chi-square: Exercise vs Diabetes (p < 0.001)
+- [x] Chi-square: Depression vs Diabetes (p < 0.001)
+- [x] 95% Confidence Intervals for BMI groups
+- [x] Non-overlapping CIs confirm BMI discriminative power
 
 ## 8-Week Roadmap
 - Week 1: Problem definition + data collection + initial inspection ← IN PROGRESS
