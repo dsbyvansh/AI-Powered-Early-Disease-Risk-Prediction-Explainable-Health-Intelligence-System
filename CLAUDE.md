@@ -15,8 +15,8 @@ CDC BRFSS dataset (~250K rows, 21 features) from Kaggle (Alex Teboul).
 - Help debug approach, not just code
 
 ## Current Status
-Week 2, Day 6 — COMPLETED ✅
-Week 2, Day 7 — Starting next (Probability Distributions + Bayes Theorem)
+Week 3, Day 8 — COMPLETED ✅
+Week 4, Day 9 — Starting next (ML Model Training begins)
 
 ## Completed So Far
 - [x] Project folder structure created
@@ -43,12 +43,34 @@ Week 2, Day 7 — Starting next (Probability Distributions + Bayes Theorem)
 - [x] Chi-square: Depression vs Diabetes (p < 0.001)
 - [x] 95% Confidence Intervals for BMI groups
 - [x] Non-overlapping CIs confirm BMI discriminative power
+- [x] Probability distributions identified
+- [x] Bayes theorem applied
+- [x] Binary encoding complete (1/2 → 1/0)
+- [x] Final sentinel audit complete
+- [x] Train/test split (80/20 stratified)
+- [x] Preprocessing pipeline built (StandardScaler, OrdinalEncoder)
+- [x] x_train, x_test, y_train, y_test saved to data/processed/
+
+## Dataset
+- Final shape: 2,018,571 rows, 36 cols
+- Train: 1,614,856 rows
+- Test: 403,715 rows
+- Class balance: 84% no diabetes, 16% diabetes
+
+## Feature Sets
+- Binary (23): _RFBING5, _AIDTST3, HLTHPLN1, QLACTLM2, CHCOCNCR,
+  _RFHLTH, HAVARTH3, HIVTST6, MEDCOST, CHCSCNCR, EXERANY2, DRNKANY5,
+  _HCVU651, ADDEPEV2, PERSDOC2, CVDSTRK3, _TOTINDA, CHCKIDNY,
+  CVDCRHD4, CVDINFR4, SEX, _DRDXAR1, PNEUVAC3
+- Continuous (3): PHYSHLTH, _BMI5, ALCDAY5
+- Ordinal (9): _SMOKER3, GENHLTH, MENTHLTH, _AGEG5YR, INCOME2,
+  EDUCA, _ASTHMS1, CHECKUP1, _CHLDCNT
 
 ## 8-Week Roadmap
-- Week 1: Problem definition + data collection + initial inspection ← IN PROGRESS
-- Week 2: Data cleaning + EDA + statistical analysis
-- Week 3: Feature engineering + preprocessing pipeline
-- Week 4: Train and compare ML models
+- Week 1: Problem definition + data collection ✅
+- Week 2: EDA + statistical analysis ✅
+- Week 3: Feature engineering + preprocessing pipeline ✅
+- Week 4: Train and compare ML models ← NEXT
 - Week 5: Deep learning model
 - Week 6: Explainable AI + error analysis
 - Week 7: Web app (Streamlit or Flask)
