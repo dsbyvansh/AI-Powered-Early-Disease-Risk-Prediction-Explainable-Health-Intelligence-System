@@ -1,5 +1,7 @@
 import streamlit as st
 import joblib
+import pandas as pd
+import shap
 
 st.set_page_config(
     page_title="Diabetes Risk Predictor",
@@ -35,8 +37,8 @@ with st.sidebar:
 
 @st.cache_resource
 def load_artifacts():
-    model = joblib.load('../models/xgboost_final.pkl')
-    preprocessor = joblib.load('../models/preprocessor.pkl')
+    model = joblib.load('C:/Users/Vansh/Desktop/Project/models/xg_boost_final.pkl')
+    preprocessor = joblib.load('C:/Users/Vansh/Desktop/Project/models/preprocessor.pkl')
     return model,preprocessor
 
 model,preprocessor = load_artifacts()
@@ -108,7 +110,42 @@ checkup_mapping = {
     "Within the past 5 years": 3.0,
     "5 or more years ago": 4.0
 }
-
+feature_name_mapping = {
+    '_RFBING5' : "General health not good (Fair/Poor)",
+    '_RFHLTH': "Health risk",
+    '_HCVU651': "Has healthcare insurance",
+    '_TOTINDA': "Total physical Activity",
+    'QLACTLM2': "Physical activities affected by health",
+    '_AIDTST3': "Tested for HIV/AIDS",
+    'HIVTST6' : "Tested for HIV/AIDS",    
+    '_ASTHMS1': "Current asthma Status",
+    'CHCSCNCR' : "Ever diagnosed with non-skin cancer",
+    'CHCOCNCR': "Ever diagnosed with skin cancer",
+    'ADDEPEV2': "Ever diagnosed with depressive disorder",
+    '_DRDXAR1': "Diagnosed with arthritis by a doctor",
+    'HAVARTH3': "Diagnosed with arthritis",
+    'CHCKIDNY': "Ever Diagnosed with kidney disease",
+    'CVDSTRK3': "Ever diagnosed with stroke",
+    'CVDCRHD4': "Ever diagnosed with a coronary heart disease",
+    'CVDINFR4': "Ever had a heart attack",
+    'CHECKUP1': "Time since last routine medical checkup",
+    'PERSDOC2': "Has a personal doctor",
+    'MEDCOST': "Could not afford a doctor due to cost",
+    'HLTHPLN1': "Has Healthcare Insurance",
+    '_CHLDCNT': "Number of children in household",
+    '_SMOKER3': "Smoking status",
+    'ALCDAY5': "Alcohol consumption frequency",
+    'DRNKANY5': "Consumed alcohol in the past 30 days",
+    'EXERANY2': "Exercise during past month",
+    'MENTHLTH': "Number of days mental health was bad in the last 30 days",
+    'PHYSHLTH': "Number of days physical health was bad in the last 30 days",
+    'GENHLTH': "General health status",
+    'EDUCA': "Education level",
+    'INCOME2': "Household income category",
+    '_BMI5': "Body mass index (calculated using height and weight)",
+    '_AGEG5YR': "Age category",
+    'SEX': "Your sex"
+}
 
 with st.form("risk_inputs"):
     st.subheader("About You")
@@ -117,7 +154,8 @@ with st.form("risk_inputs"):
     
     with col1:
         age = st.slider("How old are you?", 18, 100, 25)
-        age_band = map_to_age_band(age)
+        age = map_to_age_band(age)
+
     with col2:
         sex_option = st.selectbox(
             "What is your biological sex?",
@@ -139,6 +177,7 @@ with st.form("risk_inputs"):
                 "$75,000 or more"
             )
         )
+        income = income_mapping[income]
     with col4:
         education = st.selectbox(
             "Education Level",
@@ -151,6 +190,7 @@ with st.form("risk_inputs"):
                 "College Graduate"
             )
         )
+        education = education_mapping[education]
 
     st.subheader("Your Body")
     st.caption("Height and weight are used to calculate BMI.")
@@ -189,6 +229,10 @@ with st.form("risk_inputs"):
             "What is your current smoking status?",
             ("Never Smoked","Former Smoker","Smoke Some days","Smoke Everyday")
         )
+        smoking = smoke_mapping[smoking]
+        qlactlm2 = st.radio("Are you limited in activities due to health?",
+                            options=[1,0],
+                            format_func=lambda x: "Yes" if x == 1 else "No")
     with col9:
         alcohol_days = st.slider("How many days did you drink in past 30 days?", 0, 30, 0)
         st.caption("Select 0 if you don't drink")
@@ -200,6 +244,7 @@ with st.form("risk_inputs"):
             "How would you rate your general health?",
             ("Excellent","Very Good","Good","Fair","Poor")
         )
+        general_health = genhlth_mapping[general_health]
     with col11:
         physical_health = st.slider("In the past 30 days, how many days was your physical health not good?",0,30,0)
     with col12:
@@ -252,6 +297,7 @@ with st.form("risk_inputs"):
             "What is your current asthma status?",
             ("Never","Former","Current")
         )
+        asthma = asthma_mapping[asthma]
 
     with col20:
         hiv = st.radio("Have you ever been tested for HIV?", 
@@ -277,12 +323,127 @@ with st.form("risk_inputs"):
             "When was your last routine checkup?",
             ("Within the past year","Within the past 2 years","Within the past 5 years","5 or more years ago","Never")
         )
+        checkup = checkup_mapping[checkup]
 
-    totinda = exerany2
-    rfhlth = 1 if general_health in ["Fair","Poor"] else 0
-    hcvu651 = hlthplan
-    rfbing5 = 1 if alcohol_days>=5 else 0
-    aidtst3 = hiv
-    
     submitted = st.form_submit_button("Run Risk Screening")
     
+    
+    
+totinda = exerany2
+rfhlth = 1 if general_health in ["Fair","Poor"] else 0
+hcvu651 = hlthplan
+rfbing5 = 1 if alcohol_days>=5 else 0
+aidtst3 = hiv
+drnkany5 = 1 if alcohol_days>1 else 0
+
+if submitted:
+    input_dict = {
+            '_RFBING5' : rfbing5,
+            '_RFHLTH': rfhlth,
+            '_HCVU651': hlthplan,
+            '_TOTINDA': totinda,
+            'QLACTLM2': qlactlm2,
+            '_AIDTST3':aidtst3,
+            'HIVTST6' : hiv,
+            '_ASTHMS1': asthma,
+            'CHCSCNCR' : other_cancer,
+            'CHCOCNCR':skin_cancer,
+            'ADDEPEV2':depression,
+            '_DRDXAR1':dr_arthritis,
+            'HAVARTH3':arthritis,
+            'CHCKIDNY':kidney_disease,
+            'CVDSTRK3':stroke,
+            'CVDCRHD4':coronary_disease,
+            'CVDINFR4':heart_attack,
+            'CHECKUP1':checkup,
+            'PERSDOC2':persdoc,
+            'MEDCOST':medcost,
+            'HLTHPLN1':hlthplan,
+            '_CHLDCNT':children,
+            '_SMOKER3':smoking,
+            'ALCDAY5':alcohol_days,
+            'DRNKANY5':drnkany5,
+            'EXERANY2':exerany2,
+            'MENTHLTH':mental_health,
+            'PHYSHLTH':physical_health,
+            'GENHLTH':general_health,
+            'EDUCA':education,
+            'INCOME2':income,
+            '_BMI5':bmi,
+            '_AGEG5YR':age,
+            'SEX':sex_option
+    }
+    input_df = pd.DataFrame([input_dict])
+    input_scaled = preprocessor.transform(input_df)
+    proba = model.predict_proba(input_scaled)[0][1]
+
+    if proba<0.40:
+            risk_category = "Low Risk"
+            risk_color = "green"
+            risk_emoji = "✅"
+    elif proba < 0.73:
+            risk_category = "Medium Risk"
+            risk_color = "orange"
+            risk_emoji = "⚠️"
+    else: 
+            risk_category = "High Risk"
+            risk_color = "red"
+            risk_emoji = "🔴"
+
+    st.markdown("---")
+    st.subheader("Your Results")
+
+    res_col1,res_col2 = st.columns(2)
+
+    with res_col1:
+            st.markdown(f"### {risk_emoji} {risk_category}")
+            st.markdown(f"**Risk Score: {proba*100:.1f}%**")
+            st.markdown("Score reflects model confidence, not certainty of diagnosis")
+
+            st.markdown("#### Why this score?")
+            explainer = shap.TreeExplainer(model)
+            shap_values = explainer.shap_values(input_scaled)
+
+            #Top 3 contributing features
+            feature_names = list(input_dict.keys())
+            shap_df = pd.DataFrame({
+                'feature' : feature_names,
+                'shap_value': shap_values
+            }).sort_values("shap_value",key=abs,ascending=False).head(3)
+
+            for _,row in shap_df.iterrows():
+                direction = "increases" if row['shap_value'] > 0 else "decreases"
+                readable_name = feature_name_mapping.get(row["feature"],row["feature"])
+                st.markdown(f"**{readable_name}** {direction} your risk")
+
+
+    with res_col2:
+            if risk_category == "Low Risk":
+                st.success("Your responses suggest low diabetes risk. Maintain your healthy lifestyle")
+            elif risk_category == "Medium Risk":
+                st.warning("Your responses suggest moderate risk factors. Consider speaking with a doctor.")
+            else:
+                st.error("Your responses suggest several risk factors. Please consult a healthcare provider.")
+
+    st.markdown("#### Recommended Next Steps")
+    if risk_category == "Low Risk":
+            st.markdown("""
+            - ✅ Maintain your current healthy lifestyle
+            - 📅 Schedule annual routine checkup
+            - 🥗 Continue balanced diet and regular exercise
+            """)
+    elif risk_category == "Medium Risk":
+            st.markdown("""
+            - 🩺 Schedule a checkup with your doctor
+            - 🩸 Request a fasting blood glucose test
+            - 🏃 Increase physical activity if possible
+            - 🥗 Review dietary habits
+            """)
+    else:
+            st.markdown("""
+            - 🚨 Consult a healthcare provider soon
+            - 🩸 Request HbA1c and fasting glucose tests immediately
+            - 📋 Discuss family history with your doctor
+            - 🏃 Begin supervised exercise program
+            - 🥗 Consult a nutritionist
+            """)

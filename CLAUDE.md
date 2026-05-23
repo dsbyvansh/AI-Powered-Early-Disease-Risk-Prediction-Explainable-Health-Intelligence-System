@@ -106,7 +106,7 @@ Week 5, Day 10 — Starting next (Deep Learning begins)
 - Week 2: EDA + statistical analysis ✅
 - Week 3: Feature engineering + preprocessing pipeline ✅
 - Week 4: Train and compare ML models ✅
-- Week 5: Deep learning model ← NEXT
-- Week 6: Explainable AI + error analysis
-- Week 7: Web app (Streamlit or Flask)
+- Week 5: Deep learning model ✅
+- Week 6: Explainable AI + error analysis ✅
+- Week 7: Web app (Streamlit or Flask) ← ONGOING
 - Week 8: Final polish + documentation
