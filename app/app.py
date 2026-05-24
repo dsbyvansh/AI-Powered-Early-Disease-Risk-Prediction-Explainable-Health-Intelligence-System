@@ -37,7 +37,7 @@ with st.sidebar:
 
 @st.cache_resource
 def load_artifacts():
-    model = joblib.load('C:/Users/Vansh/Desktop/Project/models/xg_boost_final.pkl')
+    model = joblib.load('C:/Users/Vansh/Desktop/Project/models/xgboost_final.pkl')
     preprocessor = joblib.load('C:/Users/Vansh/Desktop/Project/models/preprocessor.pkl')
     return model,preprocessor
 
@@ -50,66 +50,67 @@ st.caption(
 
 
 def map_to_age_band(age):
-    if age < 25: return 0.0
-    elif age < 30: return 1.0
-    elif age < 35: return 2.0
-    elif age < 40: return 3.0
-    elif age < 45: return 4.0
-    elif age < 50: return 5.0
-    elif age < 55: return 6.0
-    elif age < 60: return 7.0
-    elif age < 65: return 8.0
-    elif age < 70: return 9.0
-    elif age < 75: return 10.0
-    elif age < 80: return 11.0
-    elif age < 85: return 12.0
-    else: return 13.0 
+    if age < 25: return 1.0
+    elif age < 30: return 2.0
+    elif age < 35: return 3.0
+    elif age < 40: return 4.0
+    elif age < 45: return 5.0
+    elif age < 50: return 6.0
+    elif age < 55: return 7.0
+    elif age < 60: return 8.0
+    elif age < 65: return 9.0
+    elif age < 70: return 10.0
+    elif age < 75: return 11.0
+    elif age < 80: return 12.0
+    elif age < 85: return 13.0
+    else: return 14.0 
 
 asthma_mapping = {
-    "Never": 0.0,      # BRFSS 1 → encoded 0
-    "Former": 1.0,     # BRFSS 2 → encoded 1
-    "Current": 2.0     # BRFSS 3 → encoded 2
+    "Never": 1.0,
+    "Former": 2.0,
+    "Current": 3.0
 }
 
 income_mapping = {
-    "Less than $15,000": 0.0,    # BRFSS 1 → encoded 0
-    "$15,000 - $25,000": 2.0,    # BRFSS 3 → encoded 2
-    "$25,000 - $50,000": 4.0,    # BRFSS 5 → encoded 4
-    "$50,000 - $75,000": 6.0,    # BRFSS 7 → encoded 6
-    "$75,000 or more": 7.0       # BRFSS 8 → encoded 7
+    "Less than $15,000": 1.0,   
+    "$15,000 - $25,000": 2.0,   
+    "$25,000 - $50,000": 4.0,   
+    "$50,000 - $75,000": 6.0,   
+    "$75,000 or more": 7.0      
 }
 
 education_mapping = {
-    "Never Attended School": 0.0,
-    "Elementary School": 1.0,
-    "High School": 2.0,
-    "High School Graduate": 3.0,
-    "Some College": 4.0,
-    "College Graduate": 5.0
+    "Never Attended School": 1.0,
+    "Elementary School": 2.0,
+    "High School": 3.0,
+    "High School Graduate": 4.0,
+    "Some College": 5.0,
+    "College Graduate": 6.0
 }
 
 genhlth_mapping = {
-    "Excellent": 0.0,
-    "Very Good": 1.0,
-    "Good": 2.0,
-    "Fair": 3.0,
-    "Poor": 4.0
+    "Excellent": 1.0,
+    "Very Good": 2.0,
+    "Good": 3.0,
+    "Fair": 4.0,
+    "Poor": 5.0
 }
 
 smoke_mapping = {
-    "Never Smoked": 3.0,    # BRFSS 4 → encoded 3
-    "Former Smoker": 2.0,   # BRFSS 3 → encoded 2
-    "Smoke Some days": 1.0, # BRFSS 2 → encoded 1
-    "Smoke Everyday": 0.0   # BRFSS 1 → encoded 0
+    "Never Smoked": 4.0,
+    "Former Smoker": 3.0,
+    "Smoke Some days": 2.0,
+    "Smoke Everyday": 1.0
 }
 
 checkup_mapping = {
-    "Never": 0.0,
+    "Never": 0.0,        
     "Within the past year": 1.0,
     "Within the past 2 years": 2.0,
     "Within the past 5 years": 3.0,
     "5 or more years ago": 4.0
 }
+
 feature_name_mapping = {
     '_RFBING5' : "General health not good (Fair/Poor)",
     '_RFHLTH': "Health risk",
@@ -161,7 +162,8 @@ with st.form("risk_inputs"):
             "What is your biological sex?",
             ("Male", "Female", "Prefer not to say")
         )
-
+        sex_encoded = 1 if sex_option=="Male" else 0
+    
     with ccol:
         children = st.slider("How many children do you have?",0,5,0)
         st.caption("Select 0 or none if not applicable")
@@ -330,7 +332,7 @@ with st.form("risk_inputs"):
     
     
 totinda = exerany2
-rfhlth = 1 if general_health in ["Fair","Poor"] else 0
+rfhlth = 1 if general_health>=3.0 else 0
 hcvu651 = hlthplan
 rfbing5 = 1 if alcohol_days>=5 else 0
 aidtst3 = hiv
@@ -359,7 +361,7 @@ if submitted:
             'PERSDOC2':persdoc,
             'MEDCOST':medcost,
             'HLTHPLN1':hlthplan,
-            '_CHLDCNT':children,
+            '_CHLDCNT': float(children + 1),  # shift 0-5 → 1-6
             '_SMOKER3':smoking,
             'ALCDAY5':alcohol_days,
             'DRNKANY5':drnkany5,
@@ -371,9 +373,16 @@ if submitted:
             'INCOME2':income,
             '_BMI5':bmi,
             '_AGEG5YR':age,
-            'SEX':sex_option
+            'SEX':sex_encoded
     }
     input_df = pd.DataFrame([input_dict])
+    binary_cols = ["_RFBING5",'_AIDTST3','HLTHPLN1','QLACTLM2','CHCOCNCR','_RFHLTH','HAVARTH3','HIVTST6','MEDCOST','CHCSCNCR','EXERANY2','DRNKANY5','_HCVU651','ADDEPEV2','PERSDOC2','CVDSTRK3','_TOTINDA','CHCKIDNY','CVDCRHD4','CVDINFR4','SEX','_DRDXAR1']
+    continous_cols = ["PHYSHLTH",'_BMI5','ALCDAY5','MENTHLTH']
+    ordinal_cols = ["_SMOKER3","GENHLTH",'_AGEG5YR','INCOME2','EDUCA','_ASTHMS1',"CHECKUP1",'_CHLDCNT']
+
+    all_cols = binary_cols + continous_cols + ordinal_cols
+    input_df = input_df[all_cols]
+    input_df = input_df.astype(float)
     input_scaled = preprocessor.transform(input_df)
     proba = model.predict_proba(input_scaled)[0][1]
 
@@ -405,16 +414,24 @@ if submitted:
             shap_values = explainer.shap_values(input_scaled)
 
             #Top 3 contributing features
-            feature_names = list(input_dict.keys())
+            feature_names = all_cols
             shap_df = pd.DataFrame({
                 'feature' : feature_names,
-                'shap_value': shap_values
+                'shap_value': shap_values[0]
             }).sort_values("shap_value",key=abs,ascending=False).head(3)
 
-            for _,row in shap_df.iterrows():
-                direction = "increases" if row['shap_value'] > 0 else "decreases"
-                readable_name = feature_name_mapping.get(row["feature"],row["feature"])
-                st.markdown(f"**{readable_name}** {direction} your risk")
+            increasers = shap_df[shap_df['shap_value']>0].head(3)
+            decreasers = shap_df[shap_df['shap_value']<0].head(2)
+
+            st.markdown("**Factors increasing your risk:**")
+            for _, row in increasers.iterrows():
+                readable = feature_name_mapping.get(row['feature'], row['feature'])
+                st.markdown(f"🔴 {readable}")
+
+                st.markdown("**Factors reducing your risk:**")
+            for _, row in decreasers.iterrows():
+                readable = feature_name_mapping.get(row['feature'], row['feature'])
+                st.markdown(f"🟢 {readable}")
 
 
     with res_col2:
