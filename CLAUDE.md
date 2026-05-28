@@ -1,7 +1,7 @@
 # Project Context for Claude Code
 
 ## Project
-AI-Powered Early Disease Risk Prediction & Explainable Health Intelligence System
+AI-Powered Early Diabetes Risk Prediction System
 
 ## Goal
 End-to-end ML/DL project for internship preparation. Predicts diabetes risk using the 

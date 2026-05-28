@@ -1,8 +1,8 @@
-# AI Powered Disease Risk Prediction
+# AI Powered Diabetes Risk Prediction
 
-I am going to be predicting the risk of Diabetes and Heart Problems for every age group
+I am going to be predicting the risk of Diabetes for every age group
 
-The End User of this system will be any person who wants to predict the risk of diabetes or heart problems and fix their lifestyle
+The End User of this system will be any person who wants to predict the risk of diabetes and fix their lifestyle
 
 ## Example data (provided by the end user)
 - Personal Data: Name, DOB, Email, Phone number, informal address(country,city,state)
@@ -12,7 +12,6 @@ The End User of this system will be any person who wants to predict the risk of 
     - Hereditary: Family Medical History (in diabetes,heart disease,hypertension,high blood sugar,high cholestrol,chest pain)
     - Vitals : Blood Pressure, Resting Heart Rate
     - Diabetes Specific: Insulin Level, HbA1c (very important)
-    - Heart Specific: Total Cholestrol, HDL/LDL Cholestrol, Exercise Frequency (Cardio or strength training), Stress Level
 
 ## Meaning Of Risk Prediction
 - Risk Prediction means predicting the risk category(high,med,low) + causing factors of diabetes or heart disease by looking at several factors (data)
@@ -24,7 +23,6 @@ The End User of this system will be any person who wants to predict the risk of 
     - Cholestrol
     - Family History
     - Lifestyle (Smoking,Exercise,Diet,Sleep,Stres)
-    - Chest Pain History
 - This problem statement is big enough to consider under both classification and regression
 
 ## Confusion Matrix Clarity

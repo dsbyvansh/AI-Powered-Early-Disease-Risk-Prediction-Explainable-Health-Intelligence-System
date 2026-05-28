@@ -6,12 +6,12 @@ import shap
 if 'page' not in st.session_state:
      st.session_state['page'] = 'form' #default
 
- 
 st.set_page_config(
     page_title="Diabetes Risk Predictor",
     page_icon="🩺",
     layout='wide'
 )
+
 st.markdown("""
     <style>
     [data-testid="stForm"] {
@@ -111,7 +111,7 @@ checkup_mapping = {
 }
 
 feature_name_mapping = {
-    '_RFBING5' : "General health not good (Fair/Poor)",
+    '_RFBING5' : "Binge drinking risk",
     '_RFHLTH': "Health risk",
     '_HCVU651': "Has healthcare insurance",
     '_TOTINDA': "Total physical Activity",
@@ -210,7 +210,6 @@ if st.session_state['page'] == 'form':
                 value=170.0,
                 step=0.5
             )
-            height_in_m = height / 100
         with col6:
             weight = st.number_input(
                 "Enter your weight in kg",
@@ -219,11 +218,8 @@ if st.session_state['page'] == 'form':
                 value=70.0,
                 step=0.5
             )
-
-        if height_in_m > 0:
-            bmi = weight / (height_in_m ** 2)
-            st.caption(f"Calculated BMI: {bmi:.1f}")
-            st.caption("BMI is a screening indicator and does not replace clinical assessment.")
+        
+        bmi = weight/ (height/100)**2
 
         st.subheader("Lifestyle")
         col7,col8,col9 = st.columns(3)
@@ -334,8 +330,8 @@ if st.session_state['page'] == 'form':
 
         submitted = st.form_submit_button("Run Risk Screening")
     
-    
-    
+
+
     totinda = exerany2
     rfhlth = 1 if general_health>=3.0 else 0
     hcvu651 = hlthplan
@@ -451,7 +447,7 @@ elif st.session_state['page'] == 'results':
                  'GENHLTH' : {1.0: "Excellent",2.0: "Very Good",3.0: "Good",4.0: "Fair",5.0: "Poor"},
                  'SEX': {1.0: 'Male', 0.0: 'Female'},
                  '_ASTHMS1': {1.0: "Never",2.0: "Former",3.0: "Current"},
-                 'INCOME2': {1.0: "Less than $15,000",2.0: "$15,000 - $25,000",4.0: "$25,000 - $50,000",6.0: "$50,000 - $75,000",7.0: "$75,000 or more"},
+                 'INCOME2': {1.0: r"Less than \$15,000",2.0: r"\$15,000 - \$25,000",4.0: r"\$25,000 - \$50,000",6.0: r"\$50,000 - \$75,000",7.0: r"\$75,000 or more"},
                  'EDUCA': {1.0: "Never Attended School",2.0: "Elementary School",3.0: "High School",4.0: "High School Graduate",5.0: "Some College",6.0: "College Graduate"},
                  'CHECKUP1': {0.0: "Never",1.0: "Within the past year",2.0: "Within the past 2 years",3.0: "Within the past 5 years",4.0: "5 or more years ago"},
                  '_AGEG5YR': {
