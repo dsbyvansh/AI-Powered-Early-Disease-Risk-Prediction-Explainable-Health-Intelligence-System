@@ -3,14 +3,16 @@ import joblib
 import pandas as pd
 import shap
 
-if 'page' not in st.session_state:
-     st.session_state['page'] = 'form' #default
-
 st.set_page_config(
     page_title="Diabetes Risk Predictor",
     page_icon="🩺",
     layout='wide'
 )
+
+if 'page' not in st.session_state:
+     st.session_state['page'] = 'form' #default
+
+
 
 st.markdown("""
     <style>
@@ -337,7 +339,7 @@ if st.session_state['page'] == 'form':
     hcvu651 = hlthplan
     rfbing5 = 1 if alcohol_days>=5 else 0
     aidtst3 = hiv
-    drnkany5 = 1 if alcohol_days>1 else 0
+    drnkany5 = 1 if alcohol_days>=1 else 0
 
     if submitted:
         input_dict = {

@@ -43,7 +43,7 @@
 - Week 1: Problem definition + data collection + Feature engineering + preprocessing pipeline
 - Week 2: EDA + statistical analysis + Train and compare ML models + Deep learning model + Explainable AI + error analysis
 - Week 3: Web app (Streamlit)
-- Week 4: Final polish + documentation <- ongoing
+- Week 4: Final polish + documentation
 
 ## Model Performance
 | Model | ROC-AUC | Recall (t=0.5) | Notes |
@@ -59,7 +59,7 @@
 ## How to Run
 ### 1) Clone the repo
 ```
-git clone <your-repo-url>
+git clone https://github.com/dsbyvansh/AI-Powered-Early-Diabetes-Risk-Prediction-Explainable-Health-Intelligence-System.git
 cd Project
 ```
 
@@ -71,7 +71,7 @@ python -m venv .venv
 
 ### 3) Install dependencies
 ```
-pip install numpy pandas scikit-learn tensorflow shap joblib streamlit matplotlib seaborn xgboost
+pip install -r requirements.txt
 ```
 
 ### 4) Download the dataset
@@ -94,10 +94,18 @@ Open the notebooks under `notebooks/` and run cells in this order:
 7) `deep_learning.ipynb`
 8) `explainability.ipynb`
 
+Note: some notebooks use absolute file paths. If you move the project folder,
+update those paths inside the notebooks.
+
+Notebook policy: outputs are cleared before final pushes for clean diffs.
+
 ### 6) Launch the Streamlit app
 ```
 streamlit run app/app.py
 ```
+
+Note: the app currently loads the model and preprocessor using absolute paths.
+If you move the project folder, update the paths inside `app/app.py`.
 
 ## Limitations
 - Trained on 2011-2015 BRFSS data; results may drift on newer populations.
@@ -108,7 +116,6 @@ streamlit run app/app.py
 
 ## Future Improvements
 - Retrain on newer BRFSS data.
-- Add a requirements file for easy setup.
 - Improve the UI and explanation visuals.
 - Add basic automated tests.
 
