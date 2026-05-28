@@ -40,14 +40,10 @@
 - Class balance: 84% no diabetes, 16% diabetes
 
 ## Methodology (8-week roadmap summary)
-- Week 1: Problem definition + data collection (done in week 1)
-- Week 2: EDA + statistical analysis (done in week 2)
-- Week 3: Feature engineering + preprocessing pipeline (done in week 1) 
-- Week 4: Train and compare ML models (done in week 2)
-- Week 5: Deep learning model (done in week 2)
-- Week 6: Explainable AI + error analysis (done in week 2)
-- Week 7: Web app (Streamlit) (done in week 3)
-- Week 8: Final polish + documentation <- ongoing
+- Week 1: Problem definition + data collection + Feature engineering + preprocessing pipeline
+- Week 2: EDA + statistical analysis + Train and compare ML models + Deep learning model + Explainable AI + error analysis
+- Week 3: Web app (Streamlit)
+- Week 4: Final polish + documentation <- ongoing
 
 ## Model Performance
 | Model | ROC-AUC | Recall (t=0.5) | Notes |
